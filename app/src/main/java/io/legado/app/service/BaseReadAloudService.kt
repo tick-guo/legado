@@ -15,6 +15,7 @@ import android.os.PowerManager
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.lifecycleScope
@@ -32,7 +33,6 @@ import io.legado.app.constant.Status
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
-import io.legado.app.model.AudioPlay
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
@@ -423,7 +423,51 @@ abstract class BaseReadAloudService : BaseService(),
             override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
                 return MediaButtonReceiver.handleIntent(this@BaseReadAloudService, mediaButtonEvent)
             }
+
+            /**
+             * Override to handle requests to begin playback.
+             */
+            override fun onPlay() {
+                Log.d(TAG, "Action onPlay")
+                resumeReadAloud()
+
+            }
+
+            /**
+             * Override to handle requests to pause playback.
+             */
+            override fun onPause() {
+                Log.d(TAG, "Action onPause")
+                pauseReadAloud()
+            }
+
+            /**
+             * Override to handle requests to skip to the next media item.
+             */
+            override fun onSkipToNext() {
+                Log.d(TAG, "Action onSkipToNext")
+                nextChapter()
+            }
+
+            /**
+             * Override to handle requests to skip to the previous media item.
+             */
+            override fun onSkipToPrevious() {
+                Log.d(TAG, "Action onSkipToPrevious")
+                prevChapter()
+            }
+
+            /**
+             * Override to handle requests to stop playback.
+             */
+            override fun onStop() {
+                Log.d(TAG, "Action onStop")
+                stopSelf()
+            }
+
+
         })
+
         mediaSessionCompat.setMediaButtonReceiver(
             broadcastPendingIntent<MediaButtonReceiver>(Intent.ACTION_MEDIA_BUTTON)
         )
