@@ -12,6 +12,7 @@ import android.media.AudioManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.os.PowerManager
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.CallSuper
@@ -31,6 +32,7 @@ import io.legado.app.constant.Status
 import io.legado.app.help.MediaHelp
 import io.legado.app.help.config.AppConfig
 import io.legado.app.help.glide.ImageLoader
+import io.legado.app.model.AudioPlay
 import io.legado.app.model.ReadAloud
 import io.legado.app.model.ReadBook
 import io.legado.app.receiver.MediaButtonReceiver
@@ -474,10 +476,28 @@ abstract class BaseReadAloudService : BaseService(),
         }
     }
 
+    open fun upMediaMetadata() {
+        var bookName = ReadBook.book?.name
+        var nSubtitle = ReadBook.curTextChapter?.title
+        val metadata = MediaMetadataCompat.Builder()
+            .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, cover)
+            .putText(MediaMetadataCompat.METADATA_KEY_TITLE/*标题，章节*/,
+                nSubtitle)
+            .putText(MediaMetadataCompat.METADATA_KEY_ARTIST/*艺术家，作者*/,
+                bookName) //因为音乐控制器一般不会显示专辑，所以这里放小说名，才能看到
+            .putText(MediaMetadataCompat.METADATA_KEY_ALBUM/*专辑，小说名字*/,
+                bookName)
+            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 5)
+            .build()
+        mediaSessionCompat.setMetadata(metadata)
+    }
+
+
     private fun upReadAloudNotification() {
         execute {
             try {
                 val notification = createNotification()
+                upMediaMetadata();
                 notificationManager.notify(NotificationId.ReadAloudService, notification.build())
             } catch (e: Exception) {
                 AppLog.put("创建朗读通知出错,${e.localizedMessage}", e, true)
@@ -518,8 +538,8 @@ abstract class BaseReadAloudService : BaseService(),
             .setSmallIcon(R.drawable.ic_volume_up)
             .setSubText(getString(R.string.read_aloud))
             .setOngoing(true)
-            .setContentTitle(nTitle)
-            .setContentText(nSubtitle)
+            .setContentTitle(nTitle) // 书名
+            .setContentText(nSubtitle)// 章
             .setContentIntent(
                 activityPendingIntent<ReadBookActivity>("activity")
             )
