@@ -402,13 +402,23 @@ abstract class BaseReadAloudService : BaseService(),
         AudioManagerCompat.abandonAudioFocusRequest(audioManager, mFocusRequest)
     }
 
+    private val AVAILABE_MEDIA_SESSION_ACTIONS = (
+               PlaybackStateCompat.ACTION_PLAY
+            or PlaybackStateCompat.ACTION_PAUSE
+            or PlaybackStateCompat.ACTION_PLAY_PAUSE
+            or PlaybackStateCompat.ACTION_STOP
+            or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+            or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+            // not support , but qidian has it
+            or PlaybackStateCompat.ACTION_SEEK_TO)
+
     /**
      * 更新媒体状态
      */
     private fun upMediaSessionPlaybackState(state: Int) {
         mediaSessionCompat.setPlaybackState(
             PlaybackStateCompat.Builder()
-                .setActions(MediaHelp.MEDIA_SESSION_ACTIONS)
+                .setActions(AVAILABE_MEDIA_SESSION_ACTIONS)
                 .setState(state, nowSpeak.toLong(), 1f)
                 .build()
         )
