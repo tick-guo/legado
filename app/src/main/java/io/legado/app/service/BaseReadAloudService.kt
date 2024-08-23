@@ -535,13 +535,18 @@ abstract class BaseReadAloudService : BaseService(),
         var nSubtitle = ReadBook.curTextChapter?.title
         val metadata = MediaMetadataCompat.Builder()
             .putBitmap(MediaMetadataCompat.METADATA_KEY_ART, cover)
+            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, cover) // 这个是media session显示的封面
+            .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, cover)
+            //
             .putText(MediaMetadataCompat.METADATA_KEY_TITLE/*标题，章节*/,
                 nSubtitle)
+            .putText(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
+                bookName)
             .putText(MediaMetadataCompat.METADATA_KEY_ARTIST/*艺术家，作者*/,
                 bookName) //因为音乐控制器一般不会显示专辑，所以这里放小说名，才能看到
             .putText(MediaMetadataCompat.METADATA_KEY_ALBUM/*专辑，小说名字*/,
                 bookName)
-            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 5)
+            //.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 5)
             .build()
         mediaSessionCompat.setMetadata(metadata)
     }
