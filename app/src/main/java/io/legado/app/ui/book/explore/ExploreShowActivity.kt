@@ -6,13 +6,13 @@ import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
 import io.legado.app.R
 import io.legado.app.base.VMBaseActivity
-import io.legado.app.data.entities.Book
 import io.legado.app.data.entities.SearchBook
 import io.legado.app.databinding.ActivityExploreShowBinding
 import io.legado.app.databinding.ViewLoadMoreBinding
 import io.legado.app.ui.book.info.BookInfoActivity
 import io.legado.app.ui.widget.recycler.LoadMoreView
 import io.legado.app.ui.widget.recycler.VerticalDivider
+import io.legado.app.utils.applyNavigationBarPadding
 import io.legado.app.utils.startActivity
 import io.legado.app.utils.viewbindingdelegate.viewBinding
 
@@ -43,6 +43,7 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
     private fun initRecyclerView() {
         binding.recyclerView.addItemDecoration(VerticalDivider(this))
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.applyNavigationBarPadding()
         adapter.addFooterView {
             ViewLoadMoreBinding.bind(loadMoreView)
         }
@@ -80,11 +81,11 @@ class ExploreShowActivity : VMBaseActivity<ActivityExploreShowBinding, ExploreSh
         }
     }
 
-    override fun isInBookshelf(name: String, author: String): Boolean {
-        return viewModel.isInBookShelf(name, author)
+    override fun isInBookshelf(book: SearchBook): Boolean {
+        return viewModel.isInBookShelf(book)
     }
 
-    override fun showBookInfo(book: Book) {
+    override fun showBookInfo(book: SearchBook) {
         startActivity<BookInfoActivity> {
             putExtra("name", book.name)
             putExtra("author", book.author)
